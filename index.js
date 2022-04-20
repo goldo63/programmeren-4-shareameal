@@ -17,7 +17,20 @@ app.all("*", (req, res, next) => {
 app.get("/", (req, res) => {
   res.status(200).json({
     status: 200,
-    result: "Hello World",
+    result: `
+    <style type="text/css">
+      h1 {
+        color: #fedde1;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+    </style>
+    <h1>
+      Welkom op in mijn api!
+    <h1>
+    `,
   });
 });
 
