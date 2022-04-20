@@ -16,8 +16,11 @@ app.all("*", (req, res, next) => {
 app.get("/", (req, res) => {
   res.status(200).send(`
   <style type="text/css">
+    body{
+      background-color: #000000;
+    }
     h1 {
-      color: #fedde1;
+      color: #ffffff;
       position: fixed;
       top: 50%;
       left: 50%;
