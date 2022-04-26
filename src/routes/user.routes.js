@@ -18,6 +18,6 @@ userRouter.post("/api/user", userController.validateUser, userController.addUser
 userRouter.delete("/api/user/:userId", userController.deleteUserById);
 
 //updates the user by id UC-205
-userRouter.put("/api/user/:userId", userController.updateUserById);
+userRouter.put("/api/user/:userId", userController.validateUser, userController.updateUserById);
 
 module.exports = userRouter;

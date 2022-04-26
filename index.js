@@ -25,6 +25,10 @@ app.all("*", (req, res) => {
   });
 });
 
+app.use((err, req, res, next) => {
+  res.status(err.status).json(err)
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });

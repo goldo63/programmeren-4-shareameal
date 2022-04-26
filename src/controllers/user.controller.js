@@ -15,10 +15,11 @@ let controller = {
             assert(typeof password === 'string','password must be a string');
             next();
         } catch (err) {
-            res.status(404).json({
+            const error ={
                 status: 404,
-                result: err.toString(),
-              });
+                result: err.message
+            }
+            next(error);
         }
     },
 
@@ -51,7 +52,7 @@ let controller = {
         });
     },
 
-    getUserById:(req, res) => {
+    getUserById:(req, res, next) => {
         const user = database.filter((item) => item.id == req.params.userId && item.type == "user");
         if(user.length == 1){
           res.status(200).json({
@@ -60,35 +61,36 @@ let controller = {
           });
           return;
         }
-        res.status(404).json({
-          status: 404,
-          result: `User by id ${userId} does not exist`
-        });
+        const error ={
+            status: 404,
+            result: `User by id ${userId} does not exist`
+        }
+        next(error);
     },
 
     requestPersonalProfile:(req, res) => {
         res.status(204).json({
-            status: 203,
+            status: 204,
             result: `This request has not been implemented yet`
           });
     },
 
-    updateUserById:(req, res) => {
+    updateUserById:(req, res, next) => {
         let user = req.body;
         const removedindex = database.findIndex((item) => item.id == req.params.userId && item.type == "user");
 
         if(removedindex == -1){
-          res.status(404).json({
-            status: 404,
-            result: `User by id ${req.params.userId} does not exist`
-          });
-          return;
+            const error ={
+                status: 404,
+                result: `User by id ${req.params.userId} does not exist`
+            }
+            next(error);
         } else if(user.email == null || database.filter((item) => item.email == user.email && item.type == "user").length > 0){
-          res.status(400).json({
-            status: 400,
-            result: "An email has not been specified or is already in use.",
-          });
-          return;
+            const error ={
+                status: 400,
+                result: `An email has not been specified or is already in use.`
+            }
+            next(error);
         }   
 
         //removes the user and adds the replacement  
@@ -107,7 +109,7 @@ let controller = {
         });
     },
 
-    deleteUserById:(req, res) => {
+    deleteUserById:(req, res, next) => {
         const removedindex = database.findIndex((item) => item.id == req.params.userId && item.type == "user");
         console.log(removedindex);
         console.log(database);
@@ -119,10 +121,11 @@ let controller = {
           });
           return;
         }
-        res.status(404).json({
-          status: 404,
-          result: `User by id ${req.params.userId} does not exist`
-        });
+        const error ={
+            status: 404,
+            result: `User by id ${req.params.userId} does not exist`
+        }
+        next(error);
     }
     
 }
