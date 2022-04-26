@@ -1,8 +1,27 @@
+const assert = require('assert');
 let database = [];
 let movieId = 0;
 let userId = 0;
 
 let controller = {
+
+    validateUser:(req, res, next) => {
+        let user = req.body;
+        let{firstName, lastName, emailAdress, password} = user;
+        try {
+            assert(typeof firstName === 'string','firstName must be a string');
+            assert(typeof lastName === 'string','lastName must be a string');
+            assert(typeof emailAdress === 'string','emailAdress must be a string');
+            assert(typeof password === 'string','password must be a string');
+            next();
+        } catch (err) {
+            res.status(404).json({
+                status: 404,
+                result: err.toString(),
+              });
+        }
+    },
+
     addUser:(req, res) => {
         let user = req.body;
         if(user.email != null && database.filter((item) => item.email == user.email && item.type == "user").length == 0){

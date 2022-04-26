@@ -12,7 +12,7 @@ userRouter.get("/api/user/:userId", userController.getUserById);
 userRouter.get("/api/user/:userId", userController.requestPersonalProfile);
 
 //Creates a new user UC-201
-userRouter.post("/api/user", userController.addUser);
+userRouter.post("/api/user", userController.validateUser, userController.addUser);
 
 //deletes the user by id UC-206
 userRouter.delete("/api/user/:userId", userController.deleteUserById);
