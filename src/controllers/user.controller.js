@@ -9,7 +9,19 @@ let controller = {
   validateUser:(req, res, next) => {
     let user = req.body;
     let{firstName, lastName, emailAdress, password} = user;
+
+    let emailcounters;
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+      connection.query('SELECT * FROM user WHERE emailAdress = ?', [emailAdress], function (error, results, fields) {
+        if (err) throw err;
+        emailcounters = results.length;
+        console.log(emailcounters);
+      });
+    });
+
     try {
+      assert(emailcounters == 0, 'email already exists');
       assert(typeof firstName === 'string','firstName must be a string');
       assert(typeof lastName === 'string','lastName must be a string');
       assert(typeof emailAdress === 'string','emailAdress must be a string');
@@ -25,40 +37,48 @@ let controller = {
   },
   
   addUser:(req, res) => {
-    let user = req.body;
-    if(user.email != null && database.filter((item) => item.email == user.email && item.type == "user").length == 0){
-      user = {
-        type:"user",
-        id:userId,
-        ...user,
-      };
-      database.push(user);
-      userId++;
-      res.status(201).json({
-        status: 201,
-        result: user,
+    let userData = req.body;
+    let user = [userData.firstName, userData.lastName,
+    userData.isActive, userData.emailAdress, userData.password,
+    userData.phoneNumber, userData.roles, userData.street, userData.city];
+
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+      connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
+       (?,?,?,?,?,?,?,?,?)`, user, function (error, results, fields) {
+        connection.release()
+        if (error) throw error;
+        console.log(results);
+
+        if(results.affectedRows > 0){
+
+          dbPools.getConnection(function(err, connection){
+            if (err) throw err;
+            connection.query(`SELECT * FROM user ORDER BY id DESC LIMIT 1`, user, function (error, results, fields) {
+              connection.release()
+              if (error) throw error;
+              res.status(200).json({
+                status: 200,
+                message: "User added with values:",
+                result: results,
+              });
+            })
+          })
+          
+        };
       });
-      return;
-    }
-    res.status(400).json({
-      status: 400,
-      result: "An email has not been specified or is already in use.",
     });
   },
   
   getAllUsers:(req, res) => {
     dbPools.getConnection(function(err, connection){
-      if (err) throw err; // not connected!
+      if (err) throw err;
       
-      // Use the connection
       connection.query('SELECT * FROM user', function (error, results, fields) {
-        // When done with the connection, release it.
         connection.release();
         
-        // Handle error after the release.
         if (error) throw error;
         
-        // Don't use the connection here, it has been returned to the pool.
         console.log('The solution is: ', results.length)
         res.status(200).json({
           status: 200,
@@ -70,14 +90,11 @@ let controller = {
   
   getUserById:(req, res, next) => {
     dbPools.getConnection(function(err, connection){
-      if (err) throw err; // not connected!
+      if (err) throw err;
       
-      // Use the connection
       connection.query('SELECT * FROM user WHERE id = ?', [req.params.userId], function (error, results, fields) {
-        // When done with the connection, release it.
+
         connection.release();
-        
-        // Handle error after the release.
         if (error) throw error;
         
         if (results.length != 1){
@@ -87,8 +104,6 @@ let controller = {
           }
           next(error);
         }
-        
-        // Don't use the connection here, it has been returned to the pool.
         console.log('The solution is: ', results.length)
         res.status(200).json({
           status: 200,
@@ -106,37 +121,50 @@ let controller = {
   },
   
   updateUserById:(req, res, next) => {
-    let user = req.body;
-    //const userId = req.params.userId;
-    const removedindex = database.findIndex((item) => item.id == req.params.userId && item.type == "user");
+    let userData = req.body;
+    const userId = req.params.userId;
+    let user = [userData.firstName, userData.lastName,
+    userData.isActive, userData.emailAdress, userData.password,
+    userData.phoneNumber, userData.roles, userData.street, userData.city, parseInt(userId)];
     
-    if(removedindex == -1){
-      const error ={
-        status: 404,
-        result: `User by id ${req.params.userId} does not exist`
-      }
-      next(error);
-    } else if(user.email == null || database.filter((item) => item.email == user.email && item.type == "user").length > 0){
-      const error ={
-        status: 400,
-        result: `An email has not been specified or is already in use.`
-      }
-      next(error);
-    }   
-    
-    //removes the user and adds the replacement  
-    database.splice(removedindex, 1);
-    
-    user = {
-      type:"user",
-      id:req.params.userId,
-      ...user,
-    };
-    database.push(user) 
-    
-    res.status(200).json({
-      status: 200,
-      result: `The user by id ${req.params.userId} has been updated`,
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+      connection.query(`UPDATE user SET firstName = ?, lastName = ?,
+       isActive = ?, emailAdress = ?, password = ?,
+        phoneNumber = ?, roles = ?,
+         street = ?, city = ? WHERE id = ?`,
+       user, function (error, results, fields) {
+        connection.release()
+        if (error) throw error;
+        console.log(results);
+
+        if(results.warningCount > 0){
+          const error ={
+            status: 400,
+            result: `Some input is wrong`
+          }
+          next(error);
+        } else if(results.affectedRows > 0){
+          dbPools.getConnection(function(err, connection){
+            connection.query('SELECT * FROM user WHERE id = ?', [userId], function (error, results, fields) {
+              connection.release();
+              if (error) throw error;
+              res.status(200).json({
+                status: 200,
+                message: `User ${userId} updated to values:`,
+                result: results,
+              });
+            });
+          }); 
+        }else{
+          const error ={
+            status: 404,
+            result: `User by id ${req.params.userId} does not exist`
+          }
+          next(error);
+        }
+
+      });
     });
   },
   
@@ -148,8 +176,7 @@ let controller = {
       connection.query('SELECT * FROM user WHERE id = ?', [userId], function (error, results, fields) {
         connection.release()
         if (error) throw error;
-        
-        // Don't use the connection here, it has been returned to the pool.
+
         console.log('Retrieved users: ', results);
         if(results != null && results.length == 1){
           res.status(200).json({
