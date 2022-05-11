@@ -188,11 +188,11 @@ describe('Users', () => {
             pools.getConnection(function(err, connection){
                 connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
                 ("test","test",0,"test@email.com","secret","test","test","test","test")`, function (error, results, fields) {
-                    if (err) throw err;
+                    if (error) throw error;
                     console.log(results);
                     connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
                     ("test","test",0,"test@2email.com","secret","test","test","test","test")`, function (error, results, fields) {
-                        if (err) throw err;
+                        if (error) throw error;
                         console.log(results);
                         connection.release();
                         chai
