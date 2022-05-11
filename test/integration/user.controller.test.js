@@ -24,7 +24,7 @@ describe('Users', () => {
                         connection.query(CLEAR_USERS_TABLE, function (error, results, fields) {
                             if (error) console.log(error);
                             connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                            ("test","test",0,"test@email.com","secret","test","test","test","test")`, function (error, results, fields) {
+                            ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                                 if (err) throw err;
                                 connection.release();
                                 done();
