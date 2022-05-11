@@ -187,11 +187,11 @@ describe('Users', () => {
         it('TC-202-2 Toon twee gebruikers', (done) => {
             pools.getConnection(function(err, connection){
                 connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                ("test","test",0,"test@email.com","secret","test","test","test","test")`, function (error, results, fields) {
+                ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                     if (error) throw error;
                     console.log(results);
                     connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                    ("test","test",0,"test@2email.com","secret","test","test","test","test")`, function (error, results, fields) {
+                    ("test","test",0,"test@2email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                         if (error) throw error;
                         console.log(results);
                         connection.release();
@@ -325,7 +325,7 @@ describe('Users', () => {
                         connection.query(CLEAR_USERS_TABLE, function (error, results, fields) {
                             if (error) console.log(error);
                             connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                            ("test","test",0,"test@email.com","secret","test","test","test","test")`, function (error, results, fields) {
+                            ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                                 if (err) throw err;
                                 connection.release();
                                 insertedId = results.insertId;
@@ -418,7 +418,7 @@ describe('Users', () => {
                         connection.query(CLEAR_USERS_TABLE, function (error, results, fields) {
                             if (error) console.log(error);
                             connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                            ("test","test",0,"test@email.com","secret","test","test","test","test")`, function (error, results, fields) {
+                            ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                                 if (err) throw err;
                                 connection.release();
                                 insertedId = results.insertId;
@@ -442,7 +442,7 @@ describe('Users', () => {
                     done();
                 })
         });
-        it('TC-204-3 Gebruiker-ID bestaat', (done) => {
+        it('TC-206-2 Gebruiker-ID bestaat', (done) => {
             console.log("Inserted id: " +insertedId);
             chai
                 .request(server)
