@@ -48,7 +48,7 @@ describe('Users', () => {
                     "phoneNumber": "Test3",
                     "roles": "guest",
                     "street": "Test3",
-                    "city": "Test3"
+                    "city": "Test3" 
                 })
                 .end((err, res) => {
                     res.should.be.an('object')
