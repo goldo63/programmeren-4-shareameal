@@ -180,8 +180,6 @@ let controller = {
       connection.query('SELECT * FROM user WHERE id = ?', [userId], function (error, results, fields) {
         connection.release()
         if (error) throw error;
-
-        console.log('Retrieved users: ', results);
         if(results != null && results.length == 1){
           res.status(200).json({
             status: 200,

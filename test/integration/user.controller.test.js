@@ -189,11 +189,9 @@ describe('Users', () => {
                 connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
                 ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                     if (error) throw error;
-                    console.log(results);
                     connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
                     ("test","test",0,"test@2email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                         if (error) throw error;
-                        console.log(results);
                         connection.release();
                         chai
                         .request(server)
@@ -301,7 +299,6 @@ describe('Users', () => {
                 })
         });
         it('TC-204-3 Gebruiker-ID bestaat', (done) => {
-            console.log("Inserted id: " +insertedId);
             chai
                 .request(server)
                 .get(`/api/user/${insertedId}`)
@@ -443,7 +440,6 @@ describe('Users', () => {
                 })
         });
         it('TC-206-2 Gebruiker-ID bestaat', (done) => {
-            console.log("Inserted id: " +insertedId);
             chai
                 .request(server)
                 .delete(`/api/user/${insertedId}`)
