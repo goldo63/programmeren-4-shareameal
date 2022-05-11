@@ -24,10 +24,19 @@ let controller = {
           assert(password != "", 'Password can\'t be empty');
           next();
         } catch (err) {
-          const error ={
-            status: 400,
-            result: err.message
+          let error;
+          if(err.message == "email already exists"){
+            error ={
+              status: 409,
+              result: err.message
+            }
+          } else{
+            error ={
+              status: 400,
+              result: err.message
+            }
           }
+          
           next(error);
         }
       });
@@ -54,8 +63,8 @@ let controller = {
             connection.query(`SELECT * FROM user ORDER BY id DESC LIMIT 1`, user, function (error, results, fields) {
               connection.release()
               if (error) throw error;
-              res.status(200).json({
-                status: 200,
+              res.status(201).json({
+                status: 201,
                 message: "User added with values:",
                 result: results,
               });

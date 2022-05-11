@@ -125,7 +125,7 @@ describe('Users', () => {
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, result } = res.body;
-                    status.should.equal(400);
+                    status.should.equal(409);
                     result.should.be.an('string').that.equals("email already exists");
                     done();
                 }) 
@@ -149,7 +149,7 @@ describe('Users', () => {
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, message, result } = res.body;
-                    status.should.equal(200);
+                    status.should.equal(201);
                     message.should.be.an('string').that.equals("User added with values:");
                     result.should.be.an('array');
                     done();
