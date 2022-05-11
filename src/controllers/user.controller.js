@@ -1,7 +1,5 @@
 const assert = require('assert');
 const dbPools = require('../../database/dbtest');
-let database = [];
-let movieId = 0;
 let userId = 0;
 
 let controller = {
@@ -16,24 +14,24 @@ let controller = {
       connection.query('SELECT * FROM user WHERE emailAdress = ?', [emailAdress], function (error, results, fields) {
         if (err) throw err;
         emailcounters = results.length;
-        console.log(emailcounters);
+        try {
+          assert(emailcounters == 0, 'email already exists');
+          assert(typeof firstName === 'string','firstName must be a string');
+          assert(typeof lastName === 'string','lastName must be a string');
+          assert(typeof emailAdress === 'string','emailAdress must be a string');
+          assert(typeof password === 'string','password must be a string');
+          assert(emailAdress != "", 'Email can\'t be empty');
+          assert(password != "", 'Password can\'t be empty');
+          next();
+        } catch (err) {
+          const error ={
+            status: 400,
+            result: err.message
+          }
+          next(error);
+        }
       });
     });
-
-    try {
-      assert(emailcounters == 0, 'email already exists');
-      assert(typeof firstName === 'string','firstName must be a string');
-      assert(typeof lastName === 'string','lastName must be a string');
-      assert(typeof emailAdress === 'string','emailAdress must be a string');
-      assert(typeof password === 'string','password must be a string');
-      next();
-    } catch (err) {
-      const error ={
-        status: 404,
-        result: err.message
-      }
-      next(error);
-    }
   },
   
   addUser:(req, res) => {
@@ -48,7 +46,6 @@ let controller = {
        (?,?,?,?,?,?,?,?,?)`, user, function (error, results, fields) {
         connection.release()
         if (error) throw error;
-        console.log(results);
 
         if(results.affectedRows > 0){
 
@@ -79,7 +76,6 @@ let controller = {
         
         if (error) throw error;
         
-        console.log('The solution is: ', results.length)
         res.status(200).json({
           status: 200,
           result: results,
@@ -96,19 +92,19 @@ let controller = {
 
         connection.release();
         if (error) throw error;
-        
+
         if (results.length != 1){
           const error ={
             status: 404,
-            result: `User by id ${userId} does not exist`
+            result: `User by id ${req.params.userId} does not exist`
           }
           next(error);
+        } else{
+          res.status(200).json({
+            status: 200,
+            result: results,
+          });
         }
-        console.log('The solution is: ', results.length)
-        res.status(200).json({
-          status: 200,
-          result: results,
-        });
       });
     });
   },
@@ -136,7 +132,6 @@ let controller = {
        user, function (error, results, fields) {
         connection.release()
         if (error) throw error;
-        console.log(results);
 
         if(results.warningCount > 0){
           const error ={
@@ -158,7 +153,7 @@ let controller = {
           }); 
         }else{
           const error ={
-            status: 404,
+            status: 400,
             result: `User by id ${req.params.userId} does not exist`
           }
           next(error);
@@ -192,7 +187,7 @@ let controller = {
           });
         } else{
           const error ={
-            status: 404,
+            status: 400,
             result: `User by id ${req.params.userId} does not exist`
           }
           next(error);
