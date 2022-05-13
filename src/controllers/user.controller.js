@@ -1,6 +1,5 @@
 const assert = require('assert');
 const dbPools = require('../../database/dbtest');
-let userId = 0;
 
 let controller = {
   
@@ -77,10 +76,31 @@ let controller = {
   },
   
   getAllUsers:(req, res) => {
+
+    const { name, isActive } = req.query;
+    //TODO: Set query to meal columns
+    let whereQuery;
+    if(name || isActive) {
+      whereQuery = ' WHERE '
+      whereValues = [];
+      if(name){
+        whereQuery += `Firstname = ? && `
+        whereValues.push(name);
+      }
+      if(isActive){ 
+        whereQuery += `isActive = ? && `
+        whereValues.push(isActive);
+      }
+
+      whereQuery = whereQuery.slice(0, -4);
+      console.log(whereQuery);
+      console.log(whereValues);
+    }
+
     dbPools.getConnection(function(err, connection){
       if (err) throw err;
       
-      connection.query('SELECT * FROM user', function (error, results, fields) {
+      connection.query('SELECT * FROM user'+ whereQuery + ';', whereValues, function (error, results, fields) {
         connection.release();
         
         if (error) throw error;

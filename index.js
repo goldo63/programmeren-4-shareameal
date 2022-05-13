@@ -4,12 +4,9 @@ const app = express();
 const port = process.env.PORT;
 const bodyParser = require("body-parser");
 const userRouter = require("./src/routes/user.routes");
+const authRouter = require("./src/routes/auth.routes");
 
 app.use(bodyParser.json());
-
-let database = [];
-let movieId = 0;
-let userId = 0;
 
 app.all("*", (req, res, next) => {
   const method = req.method;
@@ -18,6 +15,7 @@ app.all("*", (req, res, next) => {
 });
 
 app.use(userRouter);
+app.use(authRouter);
 
 app.all("*", (req, res) => {
   res.status(401).json({
