@@ -1,6 +1,7 @@
 const express = require('express');
 const userRouter = express.Router();
 const userController = require('../controllers/user.controller');
+const authController = require('../controllers/auth.controller');
 
 //gets all users UC-202
 userRouter.get("/api/user", userController.getAllUsers);
@@ -15,9 +16,9 @@ userRouter.get("/api/user/:userId", userController.requestPersonalProfile);
 userRouter.post("/api/user", userController.validateUser, userController.addUser);
 
 //deletes the user by id UC-206
-userRouter.delete("/api/user/:userId", userController.deleteUserById);
+userRouter.delete("/api/user/:userId", authController.validateLogin, userController.deleteUserById);
 
 //updates the user by id UC-205
-userRouter.put("/api/user/:userId", userController.validateUser, userController.updateUserById);
+userRouter.put("/api/user/:userId", authController.validateLogin, userController.validateUser, userController.updateUserById);
 
 module.exports = userRouter;

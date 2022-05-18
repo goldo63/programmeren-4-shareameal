@@ -14,6 +14,7 @@ let controller = {
         if (err) throw err;
         emailcounters = results.length;
         try {
+          
           assert(emailcounters == 0, 'email already exists');
           assert(typeof firstName === 'string','firstName must be a string');
           assert(typeof lastName === 'string','lastName must be a string');
@@ -21,6 +22,7 @@ let controller = {
           assert(typeof password === 'string','password must be a string');
           assert(emailAdress != "", 'Email can\'t be empty');
           assert(password != "", 'Password can\'t be empty');
+          assert(emailAdress.match("/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/"));
           next();
         } catch (err) {
           let error;
@@ -49,7 +51,7 @@ let controller = {
     userData.phoneNumber, userData.roles, userData.street, userData.city];
 
     dbPools.getConnection(function(err, connection){
-      if (err) throw err;
+      if (err) throw err; 
       connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
        (?,?,?,?,?,?,?,?,?)`, user, function (error, results, fields) {
         connection.release()

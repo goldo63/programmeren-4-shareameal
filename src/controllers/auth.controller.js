@@ -66,6 +66,11 @@ let controller = {
     const authHeader = req.headers.authorization;
     if(!authHeader){
       //error
+      const error ={
+        status: 404,
+        result: `No key found`
+      }
+      next(error);
     } else{
       //substring 7 chars substring(7, authHeader.length)
       jwt.verify(authHeader, 'process.env.JWT_SECRET', function(err, decoded) {
@@ -76,7 +81,7 @@ let controller = {
           }
           next(error);
         }
-        console.log(decoded.userid) // bar
+        console.log(decoded.userid)
         next();
       });
     }
