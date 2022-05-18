@@ -79,7 +79,7 @@ let controller = {
 
     const { name, isActive } = req.query;
     //TODO: Set query to meal columns
-    let whereQuery;
+    let whereQuery = "";
     if(name || isActive) {
       whereQuery = ' WHERE '
       whereValues = [];
