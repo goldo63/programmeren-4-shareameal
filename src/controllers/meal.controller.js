@@ -5,8 +5,47 @@ let controller = {
   validateMeal:(req, res, next) => {
     next();
   },
+  validateSignup:(req, res, next) => {
+    const mealId = parseInt(req.params.mealId);
+    const userId = res.locals.userid;
+
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+      connection.query('SELECT * FROM meal_participants_user WHERE mealId = ? AND userId = ?', [mealId, userId], function (error, results, fields) {
+        connection.release()
+        if (error) throw error;
+        
+        try{
+          assert(results.length == 0, "The user is already signed up")
+          assert(typeof mealId === 'number','mealId must be present and an integer');
+          assert(typeof userId === 'number','UserId must be present and an integer');
+          next();
+        } catch(err){
+          let error;
+          if(err.message == 'The user is already signed up'){
+            error ={
+              status: 409,
+              result: err.message
+            }
+          } else if(err.message == 'mealId must be present and an integer'){
+            error ={
+              status: 404,
+              result: err.message
+            }
+          } else {
+            error ={
+              status: 401,
+              result: err.message
+            }
+          }
+          next(error);
+        }
+
+      });
+    });
+  },
+
   addMeal:(req, res) => {
-    console.log("test");
     let mealData = req.body;
     let meal = [mealData.isActive, mealData.isVega,
     mealData.isVegan, mealData.isToTakeHome, mealData.dateTime,
@@ -24,7 +63,7 @@ let controller = {
 
           dbPools.getConnection(function(err, connection){
             if (err) throw err;
-            connection.query(`SELECT * FROM meal ORDER BY id DESC LIMIT 1`, meal, function (error, results, fields) {
+            connection.query(`SELECT * FROM meal ORDER BY id DESC LIMIT 1`, function (error, results, fields) {
               connection.release()
               if (error) throw error;
               res.status(201).json({
@@ -79,7 +118,7 @@ let controller = {
       });
     });
   },
-  updateMealById:(req, res, next) => {;
+  updateMealById:(req, res, next) => {
     const mealId = req.params.mealId;
     let mealData = req.body;
     let meal = [mealData.isActive, mealData.isVega,
@@ -158,6 +197,30 @@ let controller = {
     });
   },
 
+  signupToMealById:(req, res, next) => {
+    const mealId_UserId = [req.params.mealId, res.locals.userid];
+    
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+
+      connection.query(`INSERT INTO meal_participants_user (mealId, userId)
+      Values (?,?)`, mealId_UserId, function (error, results, fields) {
+        connection.release()
+        if (error) throw error;
+        res.status(201).json({
+          status: 201,
+          message: "signed up to meal",
+          result: {
+            "mealId": mealId_UserId[0],
+            "userId": mealId_UserId[1],
+          },
+        });
+       });
+    })
+  },
+  signoutToMealById:(req, res, next) => {
+    
+  },
 }
 
 module.exports = controller;

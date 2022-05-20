@@ -6,16 +6,22 @@ const authController = require('../controllers/auth.controller');
 //gets all meals UC-302
 mealRouter.get("/api/meal", mealController.getAllMeals);
   
-// //gets the meal by id UC-304
+//gets the meal by id UC-304
 mealRouter.get("/api/meal/:mealId", mealController.getMealById);
 
-// //Creates a new meal UC-301
+//Creates a new meal UC-301
 mealRouter.post("/api/meal", authController.validateLogin, mealController.validateMeal, mealController.addMeal);
 
-// //deletes the meal by id UC-306
+//deletes the meal by id UC-306
 mealRouter.delete("/api/meal/:mealId", authController.validateLogin, mealController.deleteMealById);
 
-// //updates the meal by id UC-305
+//updates the meal by id UC-305
 mealRouter.put("/api/meal/:mealId", authController.validateLogin, mealController.validateMeal, mealController.updateMealById);
+
+//UC-401 Aanmelden voor maaltijd
+mealRouter.post("/api/meal/:mealId/signup", authController.validateLogin, mealController.validateSignup, mealController.signupToMealById);
+
+//UC-402 Afmelden voor maaltijd
+mealRouter.delete("/api/meal/:mealId/signout", authController.validateLogin, mealController.signoutToMealById);
 
 module.exports = mealRouter;

@@ -1,4 +1,3 @@
-const assert = require('assert');
 const dbPools = require('../../database/dbtest');
 const jwt = require('jsonwebtoken');
 
@@ -81,7 +80,7 @@ let controller = {
           }
           next(error);
         }
-        console.log(decoded.userid)
+        res.locals.userid = decoded.userid;
         next();
       });
     }
