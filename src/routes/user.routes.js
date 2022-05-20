@@ -10,7 +10,7 @@ userRouter.get("/api/user", userController.getAllUsers);
 userRouter.get("/api/user/:userId", userController.getUserById);
 
 //Requests a personal user profile UC-203
-userRouter.get("/api/user/:userId", userController.requestPersonalProfile);
+userRouter.get("/api/user/:userId", authController.validateLogin, userController.requestPersonalProfile);
 
 //Creates a new user UC-201
 userRouter.post("/api/user", userController.validateUser, userController.addUser);

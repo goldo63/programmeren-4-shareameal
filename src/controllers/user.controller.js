@@ -146,13 +146,29 @@ let controller = {
   },
   
   requestPersonalProfile:(req, res) => {
-    res.status(204).json({
-      status: 204,
-      result: `This request has not been implemented yet`
-    });
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+      
+      connection.query('SELECT * FROM user WHERE id = ?', [res.locals.userid], function (error, results, fields) {
+        if (error) throw error;
+        res.status(200).json({
+          status: 200,
+          result: results,
+        });
+      })
+    })
   },
   
   updateUserById:(req, res, next) => {
+
+    if(res.locals.userid != req.params.userId){
+      const error ={
+        status: 401,
+        result: `Not autorized to change this user`
+      }
+      next(error);
+    }
+
     let userData = req.body;
     const userId = req.params.userId;
     let user = [userData.firstName, userData.lastName,
@@ -201,6 +217,14 @@ let controller = {
   
   deleteUserById:(req, res, next) => {
     const userId = req.params.userId;
+
+    if(res.locals.userid != req.params.userId){
+      const error ={
+        status: 401,
+        result: `Not autorized to delete this user`
+      }
+      next(error);
+    }
 
     dbPools.getConnection(function(err, connection){
       if (err) throw err;

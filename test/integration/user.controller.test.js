@@ -11,6 +11,7 @@ chai.use(chaiHttp)
 const CLEAR_MEAL_TABLE = 'DELETE FROM `meal`;';
 const CLEAR_PARTICIPANTS_TABLE = 'DELETE FROM `meal_participants_user`;';
 const CLEAR_USERS_TABLE = 'DELETE FROM `user`';
+let key;
 
 describe('Users', () => {
     describe('UC-201 Registreren als nieuwe gebruiker', () => {
@@ -338,6 +339,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .put(`/api/user/${insertedId}`)
+                .headers({'authorization': key})
                 .send({
                     //"firstName": "Test3",
                     "lastName": "Test3",
@@ -361,6 +363,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .put(`/api/user/10`)
+                .headers({'authorization': key})
                 .send({
                     "firstName": "Test3",
                     "lastName": "Test3",
@@ -384,6 +387,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .put(`/api/user/${insertedId}`)
+                .headers({'authorization': key})
                 .send({
                     "firstName": "Test3",
                     "lastName": "Test3",
@@ -431,6 +435,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .delete('/api/user/1')
+                .headers({'authorization': key})
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, result } = res.body;
@@ -443,6 +448,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .delete(`/api/user/${insertedId}`)
+                .headers({'authorization': key})
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, result } = res.body;
