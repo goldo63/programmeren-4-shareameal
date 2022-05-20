@@ -1,5 +1,6 @@
 const assert = require('assert');
 const dbPools = require('../../database/dbtest');
+const bcrypt = require('bcrypt');
 
 let controller = {
   
@@ -22,7 +23,7 @@ let controller = {
           assert(typeof password === 'string','password must be a string');
           assert(emailAdress != "", 'Email can\'t be empty');
           assert(password != "", 'Password can\'t be empty');
-          assert(emailAdress.match("/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/"));
+          //assert(emailAdress.match("/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/"));
           next();
         } catch (err) {
           let error;
@@ -46,33 +47,36 @@ let controller = {
   
   addUser:(req, res) => {
     let userData = req.body;
-    let user = [userData.firstName, userData.lastName,
-    userData.isActive, userData.emailAdress, userData.password,
-    userData.phoneNumber, userData.roles, userData.street, userData.city];
-
-    dbPools.getConnection(function(err, connection){
-      if (err) throw err; 
-      connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-       (?,?,?,?,?,?,?,?,?)`, user, function (error, results, fields) {
-        connection.release()
-        if (error) throw error;
-
-        if(results.affectedRows > 0){
-
-          dbPools.getConnection(function(err, connection){
-            if (err) throw err;
-            connection.query(`SELECT * FROM user ORDER BY id DESC LIMIT 1`, user, function (error, results, fields) {
-              connection.release()
-              if (error) throw error;
-              res.status(201).json({
-                status: 201,
-                message: "User added with values:",
-                result: results,
-              });
+    bcrypt.hash(userData.password, 10, function(err, hash) {
+      if(err) throw err;
+      let user = [userData.firstName, userData.lastName,
+      userData.isActive, userData.emailAdress, hash, //hashed password
+      userData.phoneNumber, userData.roles, userData.street, userData.city];
+    
+      dbPools.getConnection(function(err, connection){
+        if (err) throw err; 
+        connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
+         (?,?,?,?,?,?,?,?,?)`, user, function (error, results, fields) {
+          connection.release()
+          if (error) throw error;
+  
+          if(results.affectedRows > 0){
+  
+            dbPools.getConnection(function(err, connection){
+              if (err) throw err;
+              connection.query(`SELECT * FROM user ORDER BY id DESC LIMIT 1`, user, function (error, results, fields) {
+                connection.release()
+                if (error) throw error;
+                res.status(201).json({
+                  status: 201,
+                  message: "User added with values:",
+                  result: results,
+                });
+              })
             })
-          })
-          
-        };
+            
+          };
+        });
       });
     });
   },

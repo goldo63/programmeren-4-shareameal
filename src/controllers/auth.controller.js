@@ -1,5 +1,6 @@
 const dbPools = require('../../database/dbtest');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 let controller = {
   login:(req, res) => {
@@ -21,35 +22,41 @@ let controller = {
           //check of password klopt
           const user = results[0];
           console.log(user.id)
-          if(user.password === password){
-            console.log("test2");
 
-            jwt.sign(
-            { userid: user.id },
-            'process.env.JWT_SECRET',
-            { expiresIn: '7d'},
-            (err, token) => {
-              if(err) console.log(err);
+          bcrypt.compare(password, user.password, function(err, result) {
+            if(err) throw err;
+            if(result == true) {
+              console.log("test2");
+  
+              jwt.sign(
+              { userid: user.id },
+              'process.env.JWT_SECRET',
+              { expiresIn: '7d'},
+              (err, token) => {
+                if(err) console.log(err);
+  
+                if(token){
+                  res.status(200).json({ 
+                    status: 200,
+                    result: token,
+                  })
+                } else{
+                  res.status(503).json({
+                    status: 503,
+                    result: `No token made`,
+                  });
+                }
+              });
+              
+            } else{ 
+              res.status(404).json({
+                status: 404,
+                result: `Email and password not matching`,
+              });
+            }
+          });
 
-              if(token){
-                res.status(200).json({ 
-                  status: 200,
-                  result: token,
-                })
-              } else{
-                res.status(503).json({
-                  status: 503,
-                  result: `No token made`,
-                });
-              }
-            });
-            
-          } else{
-            res.status(404).json({
-              status: 404,
-              result: `Email and password not matching`,
-            });
-          }
+          
           
         } else{
           res.status(404).json({
