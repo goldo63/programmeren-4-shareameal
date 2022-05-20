@@ -3,7 +3,21 @@ const dbPools = require('../../database/dbtest');
 
 let controller = {
   validateMeal:(req, res, next) => {
-    next();
+    let{name, price, maxAmountOfParticipants} = req.body;
+    try {
+      assert(typeof name === 'string','name must be present and be a string');
+      assert(typeof price === 'number','price must be present and be an number');
+      assert(typeof maxAmountOfParticipants === 'number','maxAmountOfParticipants must be present and an number');
+      next();
+    } catch(err) {
+      error ={
+        status: 400,
+        result: err.message
+      }
+      next(error);
+    }
+    
+    
   },
   validateSignup:(req, res, next) => {
     const mealId = parseInt(req.params.mealId);
@@ -50,7 +64,7 @@ let controller = {
     let meal = [mealData.isActive, mealData.isVega,
     mealData.isVegan, mealData.isToTakeHome, mealData.dateTime,
     mealData.maxAmountOfParticipants, mealData.price, mealData.imageUrl,
-     mealData.cookId, mealData.name, mealData.description, mealData.allergenes];
+    res.locals.userid, mealData.name, mealData.description, mealData.allergenes];
     
     dbPools.getConnection(function(err, connection){
       if (err) throw err;
@@ -84,7 +98,6 @@ let controller = {
       
       connection.query('SELECT * FROM meal;', function (error, results, fields) {
         connection.release();
-        
         if (error) throw error;
         
         res.status(200).json({
