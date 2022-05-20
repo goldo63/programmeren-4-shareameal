@@ -219,7 +219,35 @@ let controller = {
     })
   },
   signoutToMealById:(req, res, next) => {
+    const mealId_UserId = [req.params.mealId, res.locals.userid];
     
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+
+      connection.query(`SELECT * FROM meal_participants_user WHERE mealId = ? AND userId = ?`, mealId_UserId, function (error, results, fields){
+        if (error) throw error;
+        if(results != null && results.length == 1){
+          connection.query(`DELETE FROM meal_participants_user WHERE mealId = ? AND userId = ?`, mealId_UserId, function (error, results, fields) {
+            connection.release()
+            if (error) throw error;
+            res.status(201).json({
+              status: 201,
+              message: "signed out to meal",
+              result: {
+                "mealId": parseInt(mealId_UserId[0]),
+                "userId": mealId_UserId[1],
+              },
+            });
+           });
+        } else{
+          const error ={
+            status: 400,
+            result: `The user is not signed up for the meal by id ${req.params.mealId} does not exist or meal doesn't exist`
+          }
+          next(error);
+        }
+      });
+    });
   },
 }
 
