@@ -8,7 +8,7 @@ let controller = {
 
     const { emailAdress, password } = req.body;
     dbPools.getConnection(function(err, connection){
-      if (err) console.log("test1");
+      if (err) console.log(err);
       
       connection.query('SELECT id, firstName, lastName, emailAdress, password FROM user WHERE emailAdress = ?', emailAdress, function (error, results, fields) {
         connection.release();
@@ -20,13 +20,10 @@ let controller = {
           //user met email gevonden
           //check of password klopt
           const user = results[0];
-          console.log(user.id)
 
           bcrypt.compare(password, user.password, function(err, result) {
             if(err) throw err;
             if(result == true) {
-              console.log("test2");
-  
               jwt.sign(
               { userid: user.id },
               process.env.JWT_SECRET,

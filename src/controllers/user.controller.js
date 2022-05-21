@@ -9,7 +9,6 @@ let controller = {
       if (err) throw err;
       connection.query('SELECT * FROM user WHERE id = ?', [req.params.userId], function (error, results, fields) {
         if (error) throw error;
-        console.log(results.length);
         if (results.length > 0){
           next();
         } else{
@@ -87,6 +86,7 @@ let controller = {
               connection.query(`SELECT * FROM user ORDER BY id DESC LIMIT 1`, user, function (error, results, fields) {
                 connection.release()
                 if (error) throw error;
+                console.log('User added');
                 res.status(201).json({
                   status: 201,
                   message: "User added with values:",
@@ -119,8 +119,6 @@ let controller = {
       }
 
       whereQuery = whereQuery.slice(0, -4);
-      console.log(whereQuery);
-      console.log(whereValues);
     }
 
     dbPools.getConnection(function(err, connection){
@@ -215,6 +213,7 @@ let controller = {
             connection.query('SELECT * FROM user WHERE id = ?', [userId], function (error, results, fields) {
               connection.release();
               if (error) throw error;
+              console.log('User updated');
               res.status(200).json({
                 status: 200,
                 message: `User ${userId} updated to values:`,
@@ -259,7 +258,7 @@ let controller = {
             connection.query('DELETE FROM user WHERE id = ?', [userId], function (error, results, fields) {
               connection.release();
               if (error) throw error;
-              console.log('User removed')
+              console.log('User removed');
             });
           });
         } else{

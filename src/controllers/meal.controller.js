@@ -122,6 +122,7 @@ let controller = {
               connection.query(`SELECT * FROM meal ORDER BY id DESC LIMIT 1`, function (error, results, fields) {
                 connection.release()
                 if (error) throw error;
+                console.log('Meal added');
                 res.status(201).json({
                   status: 201,
                   message: "meal added with values:",
@@ -203,6 +204,7 @@ let controller = {
             connection.query('SELECT * FROM meal WHERE id = ?', [mealId], function (error, results, fields) {
               connection.release();
               if (error) throw error;
+              console.log('Meal updated');
               res.status(200).json({
                 status: 200,
                 message: `meal ${mealId} updated to values:`,
@@ -230,6 +232,7 @@ let controller = {
         connection.release()
         if (error) throw error;
         if(results != null && results.length == 1){
+          console.log('Meal deleted');
           res.status(200).json({
             status: 200,
             result: results,

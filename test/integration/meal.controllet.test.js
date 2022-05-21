@@ -574,7 +574,6 @@ describe('Meals', () => {
                       if (error) throw error;
                       connection.query(`INSERT INTO meal_participants_user (mealId, userId) VALUES (3,1)`, function (error, results, fields) {
                         if (error) throw error;
-                        console.log(results);
                         connection.release();
                         done();
                       })
