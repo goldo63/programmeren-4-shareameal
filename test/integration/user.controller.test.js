@@ -437,7 +437,7 @@ describe('Users', () => {
         it('TC-206-1 Gebruiker bestaat niet', (done) => {
             chai
                 .request(server)
-                .delete('/api/user/2')
+                .delete('/api/user/1')
                 .set({'authorization': key})
                 .end((err, res) => {
                     res.should.be.an('object')

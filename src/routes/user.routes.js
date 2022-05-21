@@ -16,9 +16,9 @@ userRouter.get("/api/user/:userId", authController.validateLogin, userController
 userRouter.post("/api/user", userController.validateUser, userController.addUser);
 
 //deletes the user by id UC-206
-userRouter.delete("/api/user/:userId", authController.validateLogin, userController.deleteUserById);
+userRouter.delete("/api/user/:userId", userController.validateUserExistance, authController.validateLogin, userController.deleteUserById);
 
 //updates the user by id UC-205
-userRouter.put("/api/user/:userId", authController.validateLogin, userController.validateUser, userController.updateUserById);
+userRouter.put("/api/user/:userId", userController.validateUserExistance, authController.validateLogin, userController.validateUser, userController.updateUserById);
 
 module.exports = userRouter;

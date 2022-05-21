@@ -4,6 +4,24 @@ const bcrypt = require('bcrypt');
 
 let controller = {
   
+  validateUserExistance:(req, res, next) => {
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+      connection.query('SELECT * FROM user WHERE id = ?', [req.params.userId], function (error, results, fields) {
+        if (error) throw error;
+        console.log(results.length);
+        if (results.length == 0){
+          next();
+        } else{
+          error ={
+            status: 400,
+            result: `User by id ${req.params.userId} does not exist`
+          }
+        }
+      });
+    });
+  },
+
   validateUser:(req, res, next) => {
     let user = req.body;
     let{firstName, lastName, emailAdress, password} = user;
