@@ -15,6 +15,118 @@ const CLEAR_USERS_TABLE = 'DELETE FROM `user`';
 let key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTY1MzE0MDQxNywiZXhwIjoxNjUzNzQ1MjE3fQ.GC0u1Ttjh_209J16phrDiOyhaldsxAYI5-YXF_wK5Jc";
 
 describe('Users', () => {
+
+    describe('UC-101 Login', () => {
+        
+        beforeEach((done) =>{
+            pools.getConnection(function(err, connection){
+                connection.query(CLEAR_MEAL_TABLE, function (error, results, fields) {
+                    if (error) console.log(error);
+                    connection.query(CLEAR_PARTICIPANTS_TABLE, function (error, results, fields) {
+                        if (error) console.log(error);
+                        connection.query(CLEAR_USERS_TABLE, function (error, results, fields) {
+                            if (error) console.log(error);
+                            bcrypt.hash("secret", 10, function(err, hash) {
+                                if(err) throw err;
+                                connection.query(`INSERT INTO user (id, firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
+                                (1,"test","test",0,"testing@email.com",?,"test","guest","test","test")`, [hash], function (error, results, fields) {
+                                    if (error) throw error;
+                                    connection.release();
+                                    done();
+                                });
+                            });
+                        });
+                    });
+                });
+            })
+        });
+        
+        it('TC-101-1 Verplicht veld ontbreekt', (done) => {
+            chai
+            .request(server)
+            .post('/api/auth/login')
+            .send({
+                //"emailAdress": "testing@email.com",
+                "password": "secret",
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                console.log(result)
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("Email and/or password not defined or not valid");
+                done();
+            }) 
+        });
+        it('TC-101-2 Niet-valide email adres', (done) => {
+            chai
+            .request(server)
+            .post('/api/auth/login')
+            .send({
+                "emailAdress": "testingemail.com",
+                "password": "secret",
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                console.log(result)
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("Email and/or password not defined or not valid");
+                done();
+            }) 
+        });
+        it('TC-101-3 Niet-valide wachtwoord', (done) => {
+            chai
+            .request(server)
+            .post('/api/auth/login')
+            .send({
+                "emailAdress": "testing@email.com",
+                "password": 3,
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                console.log(result)
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("Email and/or password not defined or not valid");
+                done();
+            }) 
+        });
+        it('TC-101-4 Gebruiker bestaat niet', (done) => {
+            chai
+            .request(server)
+            .post('/api/auth/login')
+            .send({
+                "emailAdress": "testing2@email.com",
+                "password": "secret2",
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                console.log(result)
+                status.should.equal(404);
+                result.should.be.an('string').that.equals("No user with email: testing2@email.com");
+                done();
+            }) 
+        });
+        it('TC-101-5 Gebruiker succesvol ingelogd', (done) => {
+            chai
+            .request(server)
+            .post('/api/auth/login')
+            .send({
+                "emailAdress": "testing@email.com",
+                "password": "secret",
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                console.log(result)
+                status.should.equal(200);
+                result.should.be.an('string');
+                done();
+            }) 
+        });
+    });
     describe('UC-201 Registreren als nieuwe gebruiker', () => {
         
         beforeEach((done) =>{
