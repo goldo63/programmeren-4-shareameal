@@ -6,11 +6,11 @@ const authController = require('../controllers/auth.controller');
 //gets all users UC-202
 userRouter.get("/api/user", userController.getAllUsers);
   
+//Requests a personal user profile UC-203
+userRouter.get("/api/user/profile", authController.validateLogin, userController.requestPersonalProfile);
+
 //gets the user by id UC-204
 userRouter.get("/api/user/:userId", userController.getUserById);
-
-//Requests a personal user profile UC-203
-userRouter.get("/api/user/:userId", authController.validateLogin, userController.requestPersonalProfile);
 
 //Creates a new user UC-201
 userRouter.post("/api/user", userController.validateUser, userController.addUser);

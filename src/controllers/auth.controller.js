@@ -71,7 +71,7 @@ let controller = {
     if(!authHeader){
       //error
       const error ={
-        status: 404,
+        status: 401,
         result: `No key found`
       }
       next(error);
@@ -84,9 +84,10 @@ let controller = {
             result: `This key isn't linked to any users`
           }
           next(error);
-        }
-        res.locals.userid = decoded.userid;
-        next();
+        }else{
+          res.locals.userid = decoded.userid;
+          next();
+        } 
       });
     }
   

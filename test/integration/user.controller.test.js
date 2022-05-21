@@ -12,11 +12,11 @@ chai.use(chaiHttp)
 const CLEAR_MEAL_TABLE = 'DELETE FROM `meal`;';
 const CLEAR_PARTICIPANTS_TABLE = 'DELETE FROM `meal_participants_user`;';
 const CLEAR_USERS_TABLE = 'DELETE FROM `user`';
-const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTY1MzE0MDQxNywiZXhwIjoxNjUzNzQ1MjE3fQ.GC0u1Ttjh_209J16phrDiOyhaldsxAYI5-YXF_wK5Jc";
+let key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTY1MzE0MDQxNywiZXhwIjoxNjUzNzQ1MjE3fQ.GC0u1Ttjh_209J16phrDiOyhaldsxAYI5-YXF_wK5Jc";
 
 describe('Users', () => {
     describe('UC-201 Registreren als nieuwe gebruiker', () => {
-
+        
         beforeEach((done) =>{
             pools.getConnection(function(err, connection){
                 connection.query(CLEAR_MEAL_TABLE, function (error, results, fields) {
@@ -39,127 +39,127 @@ describe('Users', () => {
                 });
             })
         });
-
+        
         it('TC-201-1 Verplicht veld ontbreekt', (done) => {
             chai
-                .request(server)
-                .post('/api/user')
-                .send({
-                    "lastName": "Test3",
-                    "isActive": 0,
-                    "emailAdress": "m.vaaldp@er.nl",
-                    "password": "secret",
-                    "phoneNumber": "Test3",
-                    "roles": "guest",
-                    "street": "Test3",
-                    "city": "Test3" 
-                })
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(400);
-                    result.should.be.an('string').that.equals("firstName must be a string");
-                    done();
-                }) 
+            .request(server)
+            .post('/api/user')
+            .send({
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "m.vaaldp@er.nl",
+                "password": "secret",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3" 
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("firstName must be a string");
+                done();
+            }) 
         });
-
+        
         it('TC-101-2 Niet-valide email adres', (done) => {
             chai
-                .request(server)
-                .post('/api/user')
-                .send({
-                    "firstName": "Test3",
-                    "lastName": "Test3",
-                    "isActive": 0,
-                    "emailAdress": "",
-                    "password": "secret",
-                    "phoneNumber": "Test3",
-                    "roles": "guest",
-                    "street": "Test3",
-                    "city": "Test3"
-                })
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(400);
-                    result.should.be.an('string').that.equals("Email can\'t be empty");
-                    done();
-                }) 
+            .request(server)
+            .post('/api/user')
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "",
+                "password": "secret",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("Email can\'t be empty");
+                done();
+            }) 
         });
-
+        
         it('TC-101-3 Niet-valide wachtwoord', (done) => {
             chai
-                .request(server)
-                .post('/api/user')
-                .send({
-                    "firstName": "Test3",
-                    "lastName": "Test3",
-                    "isActive": 0,
-                    "emailAdress": "m.vaaldp@er.nl",
-                    "password": "",
-                    "phoneNumber": "Test3",
-                    "roles": "guest",
-                    "street": "Test3",
-                    "city": "Test3"
-                })
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(400);
-                    result.should.be.an('string').that.equals("Password can\'t be empty");
-                    done();
-                }) 
+            .request(server)
+            .post('/api/user')
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "m.vaaldp@er.nl",
+                "password": "",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("Password can\'t be empty");
+                done();
+            }) 
         });
-
+        
         it('TC-201-4 Gebruiker bestaat al', (done) => {            
             chai
-                .request(server)
-                .post('/api/user')
-                .send({
-                    "firstName": "Test3",
-                    "lastName": "Test3",
-                    "isActive": 0,
-                    "emailAdress": "testing@email.com",
-                    "password": "secret",
-                    "phoneNumber": "Test3",
-                    "roles": "guest",
-                    "street": "Test3",
-                    "city": "Test3"
-                })
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(409);
-                    result.should.be.an('string').that.equals("email already exists");
-                    done();
-                }) 
+            .request(server)
+            .post('/api/user')
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "testing@email.com",
+                "password": "secret",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(409);
+                result.should.be.an('string').that.equals("email already exists");
+                done();
+            }) 
         });
         
         it('TC-201-5 Gebruiker succesvol geregistreerd', (done) => {            
             chai
-                .request(server)
-                .post('/api/user')
-                .send({
-                    "firstName": "Test3",
-                    "lastName": "Test3",
-                    "isActive": 0,
-                    "emailAdress": "newTest@email.com",
-                    "password": "secret",
-                    "phoneNumber": "Test3",
-                    "roles": "guest",
-                    "street": "Test3",
-                    "city": "Test3"
-                })
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, message, result } = res.body;
-                    status.should.equal(201);
-                    message.should.be.an('string').that.equals("User added with values:");
-                    result.should.be.an('array');
-                    done();
-                }) 
+            .request(server)
+            .post('/api/user')
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "newTest@email.com",
+                "password": "secret",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, message, result } = res.body;
+                status.should.equal(201);
+                message.should.be.an('string').that.equals("User added with values:");
+                result.should.be.an('array');
+                done();
+            }) 
         });
-
+        
     });
     describe('UC-202 Overzicht van gebruikers', () => {
         beforeEach((done) =>{
@@ -178,23 +178,24 @@ describe('Users', () => {
         });
         it('TC-202-1 Toon nul gebruikers', (done) => {
             chai
-                .request(server)
-                .get('/api/user')
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(200);
-                    result.should.be.an('array').to.have.lengthOf(0);;
-                    done();
-                }) 
+            .request(server)
+            .get('/api/user')
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array').to.have.lengthOf(0);;
+                done();
+            }) 
         });
         it('TC-202-2 Toon twee gebruikers', (done) => {
             pools.getConnection(function(err, connection){
                 connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
                 ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                     if (error) throw error;
+                    console.log(results);
                     connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                    ("test","test",0,"test@2email.com","secret","test","guest","test","test")`, function (error, results, fields) {
+                    ("test2","test",1,"test@2email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                         if (error) throw error;
                         connection.release();
                         chai
@@ -211,59 +212,103 @@ describe('Users', () => {
                 });
             });
         });
-        it('TC-202-3 Toon gebruikers met zoekterm op niet-bestaande naam (Not implemented)', (done) => {
+        it('TC-202-3 Toon gebruikers met zoekterm op niet-bestaande naam', (done) => {
             chai
-                .request(server)
-                .get('/api/user')
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(200);
-                    result.should.be.an('array').to.have.lengthOf(0);
-                    done();
-                }) 
+            .request(server)
+            .get('/api/user?name=test3')
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array').to.have.lengthOf(0);
+                done();
+            }) 
         });
-        it('TC-202-4 Toon gebruikers met gebruik van de zoekterm op het veld ‘actief’=false (Not implemented)', (done) => {
+        it('TC-202-4 Toon gebruikers met gebruik van de zoekterm op het veld ‘actief’=false', (done) => {
             chai
-                .request(server)
-                .get('/api/user')
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(200);
-                    result.should.be.an('array');
-                    done();
-                }) 
+            .request(server)
+            .get('/api/user?actief=false')
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array');
+                done();
+            }) 
         });
-        it('TC-202-5 Toon gebruikers met gebruik van de zoekterm op het veld ‘actief’=true (Not implemented)', (done) => {
+        it('TC-202-5 Toon gebruikers met gebruik van de zoekterm op het veld ‘actief’=true', (done) => {
             chai
-                .request(server)
-                .get('/api/user')
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(200);
-                    result.should.be.an('array');
-                    done();
-                }) 
+            .request(server)
+            .get('/api/user?actief=true')
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array');
+                done();
+            }) 
         });
         it('TC-202-6 Toon gebruikers met zoekterm op bestaande naam (Not implemented)', (done) => {
             chai
-                .request(server)
-                .get('/api/user')
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(200);
-                    result.should.be.an('array');
-                    done();
-                }) 
+            .request(server)
+            .get('/api/user?name=test')
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array');
+                done();
+            }) 
         });
     });
     describe('UC-203 Gebruikersprofiel opvragen', () => {
-        it('Not implemented', (done) => {
-            done();
-        })
+        beforeEach((done) => {
+            pools.getConnection(function(err, connection){
+                connection.query(CLEAR_MEAL_TABLE, function (error, results, fields) {
+                    if (error) console.log(error);
+                    connection.query(CLEAR_PARTICIPANTS_TABLE, function (error, results, fields) {
+                        if (error) console.log(error);
+                        connection.query(CLEAR_USERS_TABLE, function (error, results, fields) {
+                            if (error) console.log(error);
+                            connection.query(`INSERT INTO user (id, firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
+                            (1,"test","test",0,"testing@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
+                                if (error) throw error;
+                                connection.release();
+                                done();
+                            });
+                        });
+                    });
+                });
+            })
+        });
+        it('TC-203-1 Ongeldig token', (done) => {
+            let wrongkey = "wrongKey";
+            chai
+            .request(server)
+            .get('/api/user/profile')
+            .set({'authorization': wrongkey})
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(404);
+                result.should.be.an('string').that.equals("This key isn't linked to any users");
+                done();
+            })
+        });
+        it('TC-203-2 Valide token en gebruiker bestaat.', (done) => {
+            chai
+            .request(server)
+            .get('/api/user/profile')
+            .set({'authorization': key})
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array');
+                done();
+            })
+        });
+        
     });
     describe('UC-204 Details van gebruiker', () => {
         let insertedId;
@@ -287,32 +332,29 @@ describe('Users', () => {
                 });
             })
         });
-        it('TC-203-1 Ongeldig token (Not implemented)', (done) => {
-            done();
-        });
         it('TC-204-2 Gebruiker-ID bestaat niet', (done) => {
             chai
-                .request(server)
-                .get('/api/user/1')
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(404);
-                    result.should.be.an('string').that.equals("User by id 1 does not exist");
-                    done();
-                })
+            .request(server)
+            .get('/api/user/1')
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(404);
+                result.should.be.an('string').that.equals("User by id 1 does not exist");
+                done();
+            })
         });
         it('TC-204-3 Gebruiker-ID bestaat', (done) => {
             chai
-                .request(server)
-                .get(`/api/user/${insertedId}`)
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(200);
-                    result.should.be.an('array');
-                    done();
-                })
+            .request(server)
+            .get(`/api/user/${insertedId}`)
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array');
+                done();
+            })
         });
     });
     describe('UC-205 Gebruiker wijzigen', () => {
@@ -337,78 +379,101 @@ describe('Users', () => {
                 });
             })
         });
-
+        
         it('TC-205-1 Verplicht veld ontbreekt', (done) => {
             chai
-                .request(server)
-                .put(`/api/user/${insertedId}`)
-                .set({'authorization': key})
-                .send({
-                    //"firstName": "Test3",
-                    "lastName": "Test3",
-                    "isActive": 0,
-                    "emailAdress": "m.vaaldp@er.nl",
-                    "password": "secret",
-                    "phoneNumber": "Test3",
-                    "roles": "guest",
-                    "street": "Test3",
-                    "city": "Test3"
-                })
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(400);
-                    result.should.be.an('string').that.equals("firstName must be a string");
-                    done();
-                }) 
+            .request(server)
+            .put(`/api/user/${insertedId}`)
+            .set({'authorization': key})
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                //"emailAdress": "m.vaaldp@er.nl",
+                "password": "secret",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("emailAdress must be a string");
+                done();
+            }) 
         });
         it('TC-205-4 Gebruiker bestaat niet', (done) => {
             chai
-                .request(server)
-                .put(`/api/user/10`)
-                .set({'authorization': key})
-                .send({
-                    "firstName": "Test3",
-                    "lastName": "Test3",
-                    "isActive": 0,
-                    "emailAdress": "m.vaaldp@er.nl",
-                    "password": "secret",
-                    "phoneNumber": "Test3",
-                    "roles": "guest",
-                    "street": "Test3",
-                    "city": "Test3"
-                })
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(400);
-                    result.should.be.an('string').that.equals(`User by id 10 does not exist`);
-                    done();
-                }) 
+            .request(server)
+            .put(`/api/user/10`)
+            .set({'authorization': key})
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "m.vaaldp@er.nl",
+                "password": "secret",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(400);
+                result.should.be.an('string').that.equals(`User by id 10 does not exist`);
+                done();
+            }) 
+        });
+        it('TC-205-5 Gebruiker succesvol gewijzigd', (done) => {
+            chai
+            .request(server)
+            .put(`/api/user/1`)
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "m.vaaldp@er.nl",
+                "password": "secret",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(401);
+                result.should.be.an('string').that.equals(`No key found`);
+                done();
+            }) 
         });
         it('TC-205-6 Gebruiker succesvol gewijzigd', (done) => {
             chai
-                .request(server)
-                .put(`/api/user/1`)
-                .set({'authorization': key})
-                .send({
-                    "firstName": "Test3",
-                    "lastName": "Test3",
-                    "isActive": 0,
-                    "emailAdress": "m.vaaldp@er.nl",
-                    "password": "secret",
-                    "phoneNumber": "Test3",
-                    "roles": "guest",
-                    "street": "Test3",
-                    "city": "Test3"
-                })
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(200);
-                    result.should.be.an('array');
-                    done();
-                }) 
+            .request(server)
+            .put(`/api/user/1`)
+            .set({'authorization': key})
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "m.vaaldp@er.nl",
+                "password": "secret",
+                "phoneNumber": "Test3",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array');
+                done();
+            }) 
         });
     });
     describe('UC-206 Gebruiker verwijderen', () => {
@@ -425,40 +490,68 @@ describe('Users', () => {
                             (1,"test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                                 if (err) throw err;
                                 connection.release();
-                                insertedId = results.insertId;
-                                done();
+                                connection.query(`INSERT INTO user (id,firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
+                                (2,"test","test",0,"test32@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
+                                    if (err) throw err;
+                                    connection.release();
+                                    done();
+                                });
                             });
                         });
                     });
                 });
             })
         });
-
+        
         it('TC-206-1 Gebruiker bestaat niet', (done) => {
             chai
-                .request(server)
-                .delete('/api/user/2')
-                .set({'authorization': key})
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(400);
-                    result.should.be.an('string').that.equals("User by id 2 does not exist");
-                    done();
-                })
+            .request(server)
+            .delete('/api/user/4')
+            .set({'authorization': key})
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("User by id 4 does not exist");
+                done();
+            })
         });
-        it('TC-206-2 Gebruiker-ID bestaat', (done) => {
+        it('TC-206-2 Niet ingelogd', (done) => {
             chai
-                .request(server)
-                .delete(`/api/user/${insertedId}`)
-                .set({'authorization': key})
-                .end((err, res) => {
-                    res.should.be.an('object')
-                    let { status, result } = res.body;
-                    status.should.equal(200);
-                    result.should.be.an('array');
-                    done();
-                })
+            .request(server)
+            .delete(`/api/user/1`)
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(401);
+                result.should.be.an('string').that.equals(`No key found`);
+                done();
+            })
+        });
+        it('TC-206-3 Actor is geen eigenaar', (done) => {
+            chai
+            .request(server)
+            .delete(`/api/user/2`)
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(401);
+                result.should.be.an('string').that.equals(`No key found`);
+                done();
+            })
+        });
+        it('TC-206-4 Gebruiker succesvol verwijderd', (done) => {
+            chai
+            .request(server)
+            .delete(`/api/user/1`)
+            .set({'authorization': key})
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(200);
+                result.should.be.an('array');
+                done();
+            })
         });
     });
 });
