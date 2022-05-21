@@ -3,7 +3,7 @@ process.env.DB_DATABASE = process.env.DB_DATABASE || 'share-a-meal-testdb'
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../index.js')
-const pools = require('../../database/dbtest')
+const pools = require('../../database/databaseConnection')
 const bcrypt = require('bcrypt');
 
 chai.should();

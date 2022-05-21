@@ -1,6 +1,7 @@
-const dbPools = require('../../database/dbtest');
+const dbPools = require('../../database/databaseConnection');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+require("dotenv").config();
 
 let controller = {
   login:(req, res) => {
@@ -28,7 +29,7 @@ let controller = {
   
               jwt.sign(
               { userid: user.id },
-              'process.env.JWT_SECRET',
+              process.env.JWT_SECRET,
               { expiresIn: '7d'},
               (err, token) => {
                 if(err) console.log(err);
@@ -77,7 +78,7 @@ let controller = {
       next(error);
     } else{
       //substring 7 chars substring(7, authHeader.length)
-      jwt.verify(authHeader, 'process.env.JWT_SECRET', function(err, decoded) {
+      jwt.verify(authHeader, process.env.JWT_SECRET, function(err, decoded) {
         if(err) {
           const error ={
             status: 404,

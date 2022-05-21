@@ -1,5 +1,5 @@
 const assert = require('assert');
-const dbPools = require('../../database/dbtest');
+const dbPools = require('../../database/databaseConnection');
 
 let controller = {
 
