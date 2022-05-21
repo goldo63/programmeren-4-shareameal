@@ -2,6 +2,25 @@ const assert = require('assert');
 const dbPools = require('../../database/dbtest');
 
 let controller = {
+
+  validateMealOwner:(req, res, next) => {
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+      connection.query('SELECT cookId FROM meal WHERE id = ?', [req.params.mealId], function (error, results, fields) {
+        if(error) throw error;
+        console.log(results[0].cookId);
+        if(results[0].cookId == res.locals.userid){
+          next();
+        } else{
+          const error ={
+            status: 401,
+            result: `This meal is not owned by the logged in user`
+          }
+          next(error);
+        }
+      });
+    });
+  },
   validateMeal:(req, res, next) => {
     let{name, price, maxAmountOfParticipants} = req.body;
     try {
@@ -59,7 +78,7 @@ let controller = {
     });
   },
 
-  addMeal:(req, res) => {
+  addMeal:(req, res, next) => {
     let mealData = req.body;
     let meal = [mealData.isActive, mealData.isVega,
     mealData.isVegan, mealData.isToTakeHome, mealData.dateTime,
@@ -71,24 +90,28 @@ let controller = {
       connection.query(`INSERT INTO meal (isActive, isVega, isVegan, isToTakeHome, dateTime, maxAmountOfParticipants, price, imageUrl, cookId, name, description, allergenes) VALUES
        (?,?,?,?,?,?,?,?,?,?,?,?)`, meal, function (error, results, fields) {
         connection.release()
-        if (error) throw error;
-
-        if(results.affectedRows > 0){
-
-          dbPools.getConnection(function(err, connection){
-            if (err) throw err;
-            connection.query(`SELECT * FROM meal ORDER BY id DESC LIMIT 1`, function (error, results, fields) {
-              connection.release()
-              if (error) throw error;
-              res.status(201).json({
-                status: 201,
-                message: "meal added with values:",
-                result: results,
-              });
+        if (error) {
+          error ={
+            status: 400,
+            result: error.message
+          }
+          next(error);
+        } else{
+          if(results.affectedRows > 0){
+            dbPools.getConnection(function(err, connection){
+              if (err) throw err;
+              connection.query(`SELECT * FROM meal ORDER BY id DESC LIMIT 1`, function (error, results, fields) {
+                connection.release()
+                if (error) throw error;
+                res.status(201).json({
+                  status: 201,
+                  message: "meal added with values:",
+                  result: results,
+                });
+              })
             })
-          })
-          
-        };
+          };
+        }
       });
     });
   },
@@ -137,7 +160,7 @@ let controller = {
     let meal = [mealData.isActive, mealData.isVega,
     mealData.isVegan, mealData.isToTakeHome, mealData.dateTime,
     mealData.maxAmountOfParticipants, mealData.price, mealData.imageUrl,
-     mealData.cookId, mealData.name, mealData.description, mealData.allergenes, parseInt(mealId)];
+    res.locals.userid, mealData.name, mealData.description, mealData.allergenes, parseInt(mealId)];
     
     dbPools.getConnection(function(err, connection){
       if (err) throw err;

@@ -37,13 +37,13 @@ describe('Meals', () => {
     });
 
     it('TC-301-1 Verplicht veld ontbreekt', (done) => {
-
+      done();
     });
     it('TC-301-2 Niet ingelogd', (done) => {
-
+      done();
     });
     it('TC-301-3 Maaltijd succesvol toegevoegd', (done) => {
-
+      done();
     });
   });
 

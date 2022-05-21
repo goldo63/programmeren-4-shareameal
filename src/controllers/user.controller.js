@@ -12,7 +12,7 @@ let controller = {
     dbPools.getConnection(function(err, connection){
       if (err) throw err;
       connection.query('SELECT * FROM user WHERE emailAdress = ?', [emailAdress], function (error, results, fields) {
-        if (err) throw err;
+        if (error) throw error;
         emailcounters = results.length;
         try {
           const emailRegex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);

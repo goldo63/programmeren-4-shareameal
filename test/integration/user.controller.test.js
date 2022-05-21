@@ -4,6 +4,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../index.js')
 const pools = require('../../database/dbtest')
+const bcrypt = require('bcrypt');
 
 chai.should();
 chai.use(chaiHttp)
@@ -11,7 +12,7 @@ chai.use(chaiHttp)
 const CLEAR_MEAL_TABLE = 'DELETE FROM `meal`;';
 const CLEAR_PARTICIPANTS_TABLE = 'DELETE FROM `meal_participants_user`;';
 const CLEAR_USERS_TABLE = 'DELETE FROM `user`';
-let key;
+const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsImlhdCI6MTY1MzE0MDQxNywiZXhwIjoxNjUzNzQ1MjE3fQ.GC0u1Ttjh_209J16phrDiOyhaldsxAYI5-YXF_wK5Jc";
 
 describe('Users', () => {
     describe('UC-201 Registreren als nieuwe gebruiker', () => {
@@ -24,11 +25,14 @@ describe('Users', () => {
                         if (error) console.log(error);
                         connection.query(CLEAR_USERS_TABLE, function (error, results, fields) {
                             if (error) console.log(error);
-                            connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                            ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
-                                if (err) throw err;
-                                connection.release();
-                                done();
+                            bcrypt.hash("secret", 10, function(err, hash) {
+                                if(err) throw err;
+                                connection.query(`INSERT INTO user (id, firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
+                                (1,"test","test",0,"testing@email.com",?,"test","guest","test","test")`, [hash], function (error, results, fields) {
+                                    if (error) throw error;
+                                    connection.release();
+                                    done();
+                                });
                             });
                         });
                     });
@@ -41,7 +45,6 @@ describe('Users', () => {
                 .request(server)
                 .post('/api/user')
                 .send({
-                    //"firstName": "Test3",
                     "lastName": "Test3",
                     "isActive": 0,
                     "emailAdress": "m.vaaldp@er.nl",
@@ -116,7 +119,7 @@ describe('Users', () => {
                     "firstName": "Test3",
                     "lastName": "Test3",
                     "isActive": 0,
-                    "emailAdress": "test@email.com",
+                    "emailAdress": "testing@email.com",
                     "password": "secret",
                     "phoneNumber": "Test3",
                     "roles": "guest",
@@ -339,7 +342,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .put(`/api/user/${insertedId}`)
-                .headers({'authorization': key})
+                .set({'authorization': key})
                 .send({
                     //"firstName": "Test3",
                     "lastName": "Test3",
@@ -363,7 +366,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .put(`/api/user/10`)
-                .headers({'authorization': key})
+                .set({'authorization': key})
                 .send({
                     "firstName": "Test3",
                     "lastName": "Test3",
@@ -387,7 +390,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .put(`/api/user/${insertedId}`)
-                .headers({'authorization': key})
+                .set({'authorization': key})
                 .send({
                     "firstName": "Test3",
                     "lastName": "Test3",
@@ -418,8 +421,8 @@ describe('Users', () => {
                         if (error) console.log(error);
                         connection.query(CLEAR_USERS_TABLE, function (error, results, fields) {
                             if (error) console.log(error);
-                            connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                            ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
+                            connection.query(`INSERT INTO user (id,firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
+                            (1,"test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                                 if (err) throw err;
                                 connection.release();
                                 insertedId = results.insertId;
@@ -434,8 +437,8 @@ describe('Users', () => {
         it('TC-206-1 Gebruiker bestaat niet', (done) => {
             chai
                 .request(server)
-                .delete('/api/user/1')
-                .headers({'authorization': key})
+                .delete('/api/user/2')
+                .set({'authorization': key})
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, result } = res.body;
@@ -448,7 +451,7 @@ describe('Users', () => {
             chai
                 .request(server)
                 .delete(`/api/user/${insertedId}`)
-                .headers({'authorization': key})
+                .set({'authorization': key})
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, result } = res.body;

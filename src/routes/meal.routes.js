@@ -13,10 +13,10 @@ mealRouter.get("/api/meal/:mealId", mealController.getMealById);
 mealRouter.post("/api/meal", authController.validateLogin, mealController.validateMeal, mealController.addMeal);
 
 //deletes the meal by id UC-306
-mealRouter.delete("/api/meal/:mealId", authController.validateLogin, mealController.deleteMealById);
+mealRouter.delete("/api/meal/:mealId", authController.validateLogin, mealController.validateMealOwner, mealController.deleteMealById);
 
 //updates the meal by id UC-305
-mealRouter.put("/api/meal/:mealId", authController.validateLogin, mealController.validateMeal, mealController.updateMealById);
+mealRouter.put("/api/meal/:mealId", authController.validateLogin, mealController.validateMealOwner, mealController.validateMeal, mealController.updateMealById);
 
 //UC-401 Aanmelden voor maaltijd
 mealRouter.post("/api/meal/:mealId/signup", authController.validateLogin, mealController.validateSignup, mealController.signupToMealById);

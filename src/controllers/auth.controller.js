@@ -6,8 +6,6 @@ let controller = {
   login:(req, res) => {
 
     const { emailAdress, password } = req.body;
-    //TODO: ASSERT voor validatie
-    console.log("test");
     dbPools.getConnection(function(err, connection){
       if (err) console.log("test1");
       
