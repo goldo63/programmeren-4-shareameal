@@ -3,6 +3,25 @@ const dbPools = require('../../database/dbtest');
 
 let controller = {
 
+  validateMealExistance:(req, res, next) => {
+    dbPools.getConnection(function(err, connection){
+      if (err) throw err;
+      connection.query('SELECT * FROM meal WHERE id = ?', [req.params.mealId], function (error, results, fields) {
+        if (error) throw error;
+        console.log(results.length);
+        if (results.length > 0){
+          next();
+        } else{
+          error ={
+            status: 404,
+            result: `Meal by id ${req.params.mealId} does not exist`
+          }
+          next(error);
+        }
+      });
+    });
+  },
+
   validateMealOwner:(req, res, next) => {
     dbPools.getConnection(function(err, connection){
       if (err) throw err;
@@ -13,7 +32,7 @@ let controller = {
           next();
         } else{
           const error ={
-            status: 401,
+            status: 403,
             result: `This meal is not owned by the logged in user`
           }
           next(error);
@@ -266,8 +285,8 @@ let controller = {
           connection.query(`DELETE FROM meal_participants_user WHERE mealId = ? AND userId = ?`, mealId_UserId, function (error, results, fields) {
             connection.release()
             if (error) throw error;
-            res.status(201).json({
-              status: 201,
+            res.status(200).json({
+              status: 200,
               message: "signed out to meal",
               result: {
                 "mealId": parseInt(mealId_UserId[0]),

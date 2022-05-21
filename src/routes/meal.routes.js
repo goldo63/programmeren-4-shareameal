@@ -13,15 +13,15 @@ mealRouter.get("/api/meal/:mealId", mealController.getMealById);
 mealRouter.post("/api/meal", authController.validateLogin, mealController.validateMeal, mealController.addMeal);
 
 //deletes the meal by id UC-306
-mealRouter.delete("/api/meal/:mealId", authController.validateLogin, mealController.validateMealOwner, mealController.deleteMealById);
+mealRouter.delete("/api/meal/:mealId", mealController.validateMealExistance, authController.validateLogin, mealController.validateMealOwner, mealController.deleteMealById);
 
 //updates the meal by id UC-305
-mealRouter.put("/api/meal/:mealId", authController.validateLogin, mealController.validateMealOwner, mealController.validateMeal, mealController.updateMealById);
+mealRouter.put("/api/meal/:mealId", mealController.validateMealExistance, authController.validateLogin, mealController.validateMealOwner, mealController.validateMeal, mealController.updateMealById);
 
 //UC-401 Aanmelden voor maaltijd
-mealRouter.post("/api/meal/:mealId/signup", authController.validateLogin, mealController.validateSignup, mealController.signupToMealById);
+mealRouter.post("/api/meal/:mealId/signup", mealController.validateMealExistance, authController.validateLogin, mealController.validateSignup, mealController.signupToMealById);
 
 //UC-402 Afmelden voor maaltijd
-mealRouter.delete("/api/meal/:mealId/signout", authController.validateLogin, mealController.signoutToMealById);
+mealRouter.delete("/api/meal/:mealId/signout", mealController.validateMealExistance, authController.validateLogin, mealController.signoutToMealById);
 
 module.exports = mealRouter;
