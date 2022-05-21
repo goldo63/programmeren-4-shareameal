@@ -325,8 +325,8 @@ describe('Users', () => {
                         if (error) console.log(error);
                         connection.query(CLEAR_USERS_TABLE, function (error, results, fields) {
                             if (error) console.log(error);
-                            connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
-                            ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
+                            connection.query(`INSERT INTO user (id,firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
+                            (1,"test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                                 if (err) throw err;
                                 connection.release();
                                 insertedId = results.insertId;
@@ -389,7 +389,7 @@ describe('Users', () => {
         it('TC-205-6 Gebruiker succesvol gewijzigd', (done) => {
             chai
                 .request(server)
-                .put(`/api/user/${insertedId}`)
+                .put(`/api/user/1`)
                 .set({'authorization': key})
                 .send({
                     "firstName": "Test3",
@@ -437,13 +437,13 @@ describe('Users', () => {
         it('TC-206-1 Gebruiker bestaat niet', (done) => {
             chai
                 .request(server)
-                .delete('/api/user/1')
+                .delete('/api/user/2')
                 .set({'authorization': key})
                 .end((err, res) => {
                     res.should.be.an('object')
                     let { status, result } = res.body;
                     status.should.equal(400);
-                    result.should.be.an('string').that.equals("User by id 1 does not exist");
+                    result.should.be.an('string').that.equals("User by id 2 does not exist");
                     done();
                 })
         });

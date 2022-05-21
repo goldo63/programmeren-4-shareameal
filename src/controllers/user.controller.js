@@ -10,13 +10,14 @@ let controller = {
       connection.query('SELECT * FROM user WHERE id = ?', [req.params.userId], function (error, results, fields) {
         if (error) throw error;
         console.log(results.length);
-        if (results.length == 0){
+        if (results.length > 0){
           next();
         } else{
           error ={
             status: 400,
             result: `User by id ${req.params.userId} does not exist`
           }
+          next(error);
         }
       });
     });
