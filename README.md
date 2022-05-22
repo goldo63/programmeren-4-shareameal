@@ -1,4 +1,71 @@
-# programmeren-4-sam-server
+# ShareAMeal API
+
+## About
+The Share a meal API is obviously an API. It is created using javascript in combination with nodejs.
+The API allows users(user applications) to retrieve information about meals beeing served by other users. Users can participate in eachothers meals. So besides retrieve information, the user can also post their own meals so others can participate.
+
+To use the API to it's full potential the user needs to register themselves and then login. The API then gives a API key that is needed for the more advanced requests.
+
+## The API
+
+<details><summary>USER</summary>
+<p>
+- REGISTER USER: post("/api/user")
+- GET ALL USERS: get("/api/user")
+- GET USERS BY ID: get("/api/user/*id*")
+- GET PERSONAL PROFILE: get("/api/profile")
+- UPDATE USER: put("/api/user/*id*")
+- DELETE USER: delete("/api/user/*id*")
+
+- LOGIN: post("/api/auth/login")
+</p>
+</details>
+<details><summary>MEAL</summary>
+<p>
+- REGISTER MEAL: post("/api/meal")
+- GET ALL MEALS: get("/api/meal")
+- GET MEALS BY ID: get("/api/meal/*id*")
+- UPDATE MEALS: put("/api/meal/*id*")
+- DELETE MEALS: delete("/api/meal/*id*")
+
+- SIGN UP TO MEAL: post("/api/meal/*id*/signup")
+- SIGN OUT TO MEAL: post("/api/meal/*id*/signout")
+</p>
+</details>
+
+## The Data
+### USER
+```
+{
+    "firstName": string,
+    "lastName": string,
+    "isActive": number,
+    "emailAdress": string(validated),
+    "password": string,
+    "phoneNumber": string(validated),
+    "roles": string('admin', 'editor', 'guest'),
+    "street": string,
+    "city": string
+}
+```
+
+### MEAL
+```
+{
+    "isActive": number,
+    "isVega": number,
+    "isVegan": number,
+    "isToTakeHome": number,
+    "dateTime": string,
+    "maxAmountOfParticipants": number,
+    "price": number,
+    "imageUrl": string,
+    "name": string,
+    "description": string,
+    "allergenes": string('gluten', 'lactose', 'noten')
+}
+```
+
 
 
 
