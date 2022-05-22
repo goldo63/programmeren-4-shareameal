@@ -8,8 +8,9 @@ To use the API to it's full potential the user needs to register themselves and 
 
 ## The API
 
-<details><summary>USER</summary>
+<details><summary><h3>USER<h3></summary>
 <p>
+
 - REGISTER USER: post("/api/user")
 - GET ALL USERS: get("/api/user")
 - GET USERS BY ID: get("/api/user/*id*")
@@ -18,10 +19,12 @@ To use the API to it's full potential the user needs to register themselves and 
 - DELETE USER: delete("/api/user/*id*")
 
 - LOGIN: post("/api/auth/login")
+
 </p>
 </details>
 <details><summary>MEAL</summary>
 <p>
+
 - REGISTER MEAL: post("/api/meal")
 - GET ALL MEALS: get("/api/meal")
 - GET MEALS BY ID: get("/api/meal/*id*")
@@ -30,6 +33,7 @@ To use the API to it's full potential the user needs to register themselves and 
 
 - SIGN UP TO MEAL: post("/api/meal/*id*/signup")
 - SIGN OUT TO MEAL: post("/api/meal/*id*/signout")
+
 </p>
 </details>
 
