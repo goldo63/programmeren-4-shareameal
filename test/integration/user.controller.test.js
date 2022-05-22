@@ -52,7 +52,6 @@ describe('Users', () => {
             .end((err, res) => {
                 res.should.be.an('object')
                 let { status, result } = res.body;
-                console.log(result)
                 status.should.equal(400);
                 result.should.be.an('string').that.equals("Email and/or password not defined or not valid");
                 done();
@@ -69,7 +68,6 @@ describe('Users', () => {
             .end((err, res) => {
                 res.should.be.an('object')
                 let { status, result } = res.body;
-                console.log(result)
                 status.should.equal(400);
                 result.should.be.an('string').that.equals("Email and/or password not defined or not valid");
                 done();
@@ -86,7 +84,6 @@ describe('Users', () => {
             .end((err, res) => {
                 res.should.be.an('object')
                 let { status, result } = res.body;
-                console.log(result)
                 status.should.equal(400);
                 result.should.be.an('string').that.equals("Email and/or password not defined or not valid");
                 done();
@@ -103,7 +100,6 @@ describe('Users', () => {
             .end((err, res) => {
                 res.should.be.an('object')
                 let { status, result } = res.body;
-                console.log(result)
                 status.should.equal(404);
                 result.should.be.an('string').that.equals("No user with email: testing2@email.com");
                 done();
@@ -120,7 +116,6 @@ describe('Users', () => {
             .end((err, res) => {
                 res.should.be.an('object')
                 let { status, result } = res.body;
-                console.log(result)
                 status.should.equal(200);
                 result.should.be.an('string');
                 done();
@@ -161,7 +156,7 @@ describe('Users', () => {
                 "isActive": 0,
                 "emailAdress": "m.vaaldp@er.nl",
                 "password": "secret",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3" 
@@ -185,7 +180,7 @@ describe('Users', () => {
                 "isActive": 0,
                 "emailAdress": "",
                 "password": "secret",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3"
@@ -209,7 +204,7 @@ describe('Users', () => {
                 "isActive": 0,
                 "emailAdress": "m.vaaldp@er.nl",
                 "password": "",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3"
@@ -233,7 +228,7 @@ describe('Users', () => {
                 "isActive": 0,
                 "emailAdress": "testing@email.com",
                 "password": "secret",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3"
@@ -257,7 +252,7 @@ describe('Users', () => {
                 "isActive": 0,
                 "emailAdress": "newTest@email.com",
                 "password": "secret",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3"
@@ -305,7 +300,6 @@ describe('Users', () => {
                 connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
                 ("test","test",0,"test@email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                     if (error) throw error;
-                    console.log(results);
                     connection.query(`INSERT INTO user (firstName, lastName, isActive, emailAdress, password, phoneNumber, roles, street, city) VALUES
                     ("test2","test",1,"test@2email.com","secret","test","guest","test","test")`, function (error, results, fields) {
                         if (error) throw error;
@@ -503,7 +497,7 @@ describe('Users', () => {
                 "isActive": 0,
                 //"emailAdress": "m.vaaldp@er.nl",
                 "password": "secret",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3"
@@ -513,6 +507,30 @@ describe('Users', () => {
                 let { status, result } = res.body;
                 status.should.equal(400);
                 result.should.be.an('string').that.equals("emailAdress must be a string");
+                done();
+            }) 
+        });
+        it('TC-205-3 Niet-valide telefoonnummer', (done) => {
+            chai
+            .request(server)
+            .put(`/api/user/${insertedId}`)
+            .set({'authorization': key})
+            .send({
+                "firstName": "Test3",
+                "lastName": "Test3",
+                "isActive": 0,
+                "emailAdress": "m.vaaldp@er.nl",
+                "password": "secret",
+                "phoneNumber": "test",
+                "roles": "guest",
+                "street": "Test3",
+                "city": "Test3"
+            })
+            .end((err, res) => {
+                res.should.be.an('object')
+                let { status, result } = res.body;
+                status.should.equal(400);
+                result.should.be.an('string').that.equals("The phonenumber is not valid");
                 done();
             }) 
         });
@@ -527,7 +545,7 @@ describe('Users', () => {
                 "isActive": 0,
                 "emailAdress": "m.vaaldp@er.nl",
                 "password": "secret",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3"
@@ -540,7 +558,7 @@ describe('Users', () => {
                 done();
             }) 
         });
-        it('TC-205-5 Gebruiker succesvol gewijzigd', (done) => {
+        it('TC-205-5 Niet ingelogd', (done) => {
             chai
             .request(server)
             .put(`/api/user/1`)
@@ -550,7 +568,7 @@ describe('Users', () => {
                 "isActive": 0,
                 "emailAdress": "m.vaaldp@er.nl",
                 "password": "secret",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3"
@@ -574,7 +592,7 @@ describe('Users', () => {
                 "isActive": 0,
                 "emailAdress": "m.vaaldp@er.nl",
                 "password": "secret",
-                "phoneNumber": "Test3",
+                "phoneNumber": "0691214328",
                 "roles": "guest",
                 "street": "Test3",
                 "city": "Test3"

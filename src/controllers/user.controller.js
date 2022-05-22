@@ -24,7 +24,7 @@ let controller = {
 
   validateUser:(req, res, next) => {
     let user = req.body;
-    let{firstName, lastName, emailAdress, password} = user;
+    let{firstName, lastName, emailAdress, password, phoneNumber} = user;
 
     let emailcounters;
     dbPools.getConnection(function(err, connection){
@@ -34,7 +34,7 @@ let controller = {
         emailcounters = results.length;
         try {
           const emailRegex = new RegExp(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/);
-
+          const phoneRegex = new RegExp(/^\(?([+]31|0031|0)-?6(\s?|-)([0-9]\s{0,3}){8}$/);
           assert(emailcounters == 0, 'email already exists');
           assert(typeof firstName === 'string','firstName must be a string');
           assert(typeof lastName === 'string','lastName must be a string');
@@ -42,7 +42,8 @@ let controller = {
           assert(typeof password === 'string','password must be a string');
           assert(emailAdress != "", 'Email can\'t be empty');
           assert(password != "", 'Password can\'t be empty');
-          assert(emailRegex.test(emailAdress));
+          assert(emailRegex.test(emailAdress), 'The email is not valid');
+          assert(phoneRegex.test(phoneNumber), 'The phonenumber is not valid');
           next();
         } catch (err) {
           let error;
