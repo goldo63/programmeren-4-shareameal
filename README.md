@@ -6,6 +6,9 @@ The API allows users(user applications) to retrieve information about meals beei
 
 To use the API to it's full potential the user needs to register themselves and then login. The API then gives a API key that is needed for the more advanced requests.
 
+API created by **Tim Aerts**(2173544)
+**Email:** tpcw.aerts@student.avans.nl
+
 ## The API
 
 <details><summary><h3>User</h3></summary>
