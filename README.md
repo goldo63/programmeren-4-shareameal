@@ -8,7 +8,7 @@ To use the API to it's full potential the user needs to register themselves and 
 
 ## The API
 
-<details><summary><h3>USER<h3></summary>
+<details><summary><h3>User</h3></summary>
 <p>
 
 - REGISTER USER: post("/api/user")
@@ -22,7 +22,7 @@ To use the API to it's full potential the user needs to register themselves and 
 
 </p>
 </details>
-<details><summary>MEAL</summary>
+<details><summary><h3>Meal</h3></summary>
 <p>
 
 - REGISTER MEAL: post("/api/meal")
@@ -38,6 +38,46 @@ To use the API to it's full potential the user needs to register themselves and 
 </details>
 
 ## The Data
+<details><summary><h3>User</h3></summary>
+<p>
+
+```
+{
+    "firstName": string,
+    "lastName": string,
+    "isActive": number,
+    "emailAdress": string(validated),
+    "password": string,
+    "phoneNumber": string(validated),
+    "roles": string('admin', 'editor', 'guest'),
+    "street": string,
+    "city": string
+}
+```
+
+</p>
+</details>
+<details><summary><h3>Meal</h3></summary>
+<p>
+
+```
+{
+    "isActive": number,
+    "isVega": number,
+    "isVegan": number,
+    "isToTakeHome": number,
+    "dateTime": string,
+    "maxAmountOfParticipants": number,
+    "price": number,
+    "imageUrl": string,
+    "name": string,
+    "description": string,
+    "allergenes": string('gluten', 'lactose', 'noten')
+}
+```
+
+</p>
+</details>
 ### USER
 ```
 {
